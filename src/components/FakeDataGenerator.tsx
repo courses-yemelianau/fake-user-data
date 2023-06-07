@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
+import { faker } from '@faker-js/faker';
 
 interface UserData {
     index: number;
@@ -21,21 +22,15 @@ const App: React.FC<AppProps> = () => {
 
     const generateData = useCallback(() => {
         setIsLoading(true);
-
-        // Simulate API call to generate fake data
-        // Replace this with your actual data generation logic
         setTimeout(() => {
-            const data: UserData[] = [];
-            // Generate 20 records
-            for (let i = 1; i <= 20; i++) {
-                const index = i;
+            const data: UserData[] = Array.from({ length: 20 }, (_, index) => {
                 const identifier = generateRandomIdentifier();
                 const name = generateRandomName();
                 const address = generateRandomAddress();
                 const phone = generateRandomPhone();
 
-                data.push({ index, identifier, name, address, phone });
-            }
+                return { index: index + 1, identifier, name, address, phone };
+            });
 
             setIsLoading(false);
             setUserData(data);
@@ -53,23 +48,19 @@ const App: React.FC<AppProps> = () => {
     }, [region, errorCount, seed, generateData]);
 
     const generateRandomIdentifier = (): string => {
-        // Generate random identifier logic
-        return '';
+        return faker.string.uuid();
     };
 
     const generateRandomName = (): string => {
-        // Generate random name logic based on region
-        return '';
+        return faker.person.fullName();
     };
 
     const generateRandomAddress = (): string => {
-        // Generate random address logic based on region
-        return '';
+        return faker.location.streetAddress();
     };
 
     const generateRandomPhone = (): string => {
-        // Generate random phone logic based on region
-        return '';
+        return faker.phone.number();
     };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
