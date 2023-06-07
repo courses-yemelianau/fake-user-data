@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
-import { faker } from '@faker-js/faker';
+// import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/en';
+import { faker as ruFaker } from '@faker-js/faker/locale/ru';
+import { faker as ukFaker } from '@faker-js/faker/locale/uk';
+
+const regionLanguageMap: { [key: string]: any } = {
+    '': faker,
+    USA: faker,
+    Russia: ruFaker,
+    Ukraine: ukFaker
+};
 
 interface UserData {
     index: number;
@@ -23,11 +33,12 @@ const App: React.FC<AppProps> = () => {
     const generateData = useCallback(() => {
         setIsLoading(true);
         setTimeout(() => {
+            const languageModule = regionLanguageMap[region];
             const data: UserData[] = Array.from({ length: 20 }, (_, index) => {
-                const identifier = generateRandomIdentifier();
-                const name = generateRandomName();
-                const address = generateRandomAddress();
-                const phone = generateRandomPhone();
+                const identifier = generateRandomIdentifier(languageModule);
+                const name = generateRandomName(languageModule);
+                const address = generateRandomAddress(languageModule);
+                const phone = generateRandomPhone(languageModule);
 
                 return { index: index + 1, identifier, name, address, phone };
             });
@@ -35,7 +46,7 @@ const App: React.FC<AppProps> = () => {
             setIsLoading(false);
             setUserData(data);
         }, 500);
-    }, []);
+    }, [region]);
 
     useEffect(() => {
         // Fetch initial data
@@ -47,20 +58,20 @@ const App: React.FC<AppProps> = () => {
         generateData();
     }, [region, errorCount, seed, generateData]);
 
-    const generateRandomIdentifier = (): string => {
-        return faker.string.uuid();
+    const generateRandomIdentifier = (fakerModule: any): string => {
+        return fakerModule.string.uuid();
     };
 
-    const generateRandomName = (): string => {
-        return faker.person.fullName();
+    const generateRandomName = (fakerModule: any): string => {
+        return fakerModule.person.fullName();
     };
 
-    const generateRandomAddress = (): string => {
-        return faker.location.streetAddress();
+    const generateRandomAddress = (fakerModule: any): string => {
+        return fakerModule.location.streetAddress();
     };
 
-    const generateRandomPhone = (): string => {
-        return faker.phone.number();
+    const generateRandomPhone = (fakerModule: any): string => {
+        return fakerModule.phone.number();
     };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -77,19 +88,17 @@ const App: React.FC<AppProps> = () => {
         // Simulate API call to load more data
         // Replace this with your actual data loading logic
         setTimeout(() => {
-            const newData: UserData[] = [];
+            const languageModule = regionLanguageMap[region];
             const startIndex = userData.length + 1;
+            const newData: UserData[] = Array.from({ length: 10 }, (_, index) => {
+                const i = startIndex + index;
+                const identifier = generateRandomIdentifier(languageModule);
+                const name = generateRandomName(languageModule);
+                const address = generateRandomAddress(languageModule);
+                const phone = generateRandomPhone(languageModule);
 
-            // Generate 10 more records
-            for (let i = startIndex; i <= startIndex + 10; i++) {
-                const index = i;
-                const identifier = generateRandomIdentifier();
-                const name = generateRandomName();
-                const address = generateRandomAddress();
-                const phone = generateRandomPhone();
-
-                newData.push({ index, identifier, name, address, phone });
-            }
+                return { index: i, identifier, name, address, phone };
+            });
 
             setIsLoading(false);
             setUserData((prevData) => [...prevData, ...newData]);
@@ -123,11 +132,10 @@ const App: React.FC<AppProps> = () => {
                             </Form.Label>
                             <Col sm={4}>
                                 <Form.Control as="select" value={region} onChange={handleRegionChange}>
-                                    <option value="">Select region</option>
-                                    <option value="Poland">Poland</option>
-                                    <option value="USA">USA</option>
-                                    <option value="Georgia">Georgia</option>
-                                    {/* Add more regions */}
+                                    <option value="">Select language</option>
+                                    <option value="USA">English</option>
+                                    <option value="Russia">Russian</option>
+                                    <option value="Ukraine">Ukrainian</option>
                                 </Form.Control>
                             </Col>
                         </Form.Group>
