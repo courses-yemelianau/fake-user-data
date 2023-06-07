@@ -1,28 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
-// import { faker } from '@faker-js/faker';
-import { faker } from '@faker-js/faker/locale/en';
-import { faker as ruFaker } from '@faker-js/faker/locale/ru';
-import { faker as ukFaker } from '@faker-js/faker/locale/uk';
+import { UserData } from '../interfaces';
+import { Default, regionLanguageMap } from '../constants';
+import { generateUserData } from '../utils';
 
-const regionLanguageMap: { [key: string]: any } = {
-    '': faker,
-    USA: faker,
-    Russia: ruFaker,
-    Ukraine: ukFaker
-};
-
-interface UserData {
-    index: number;
-    identifier: string;
-    name: string;
-    address: string;
-    phone: string;
-}
-
-interface AppProps {}
-
-const App: React.FC<AppProps> = () => {
+const FakeDataGenerator = () => {
     const [region, setRegion] = useState<string>('');
     const [errorCount, setErrorCount] = useState<number>(0);
     const [seed, setSeed] = useState<string>('');
@@ -30,79 +12,38 @@ const App: React.FC<AppProps> = () => {
     const [userData, setUserData] = useState<UserData[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const generateData = useCallback(() => {
+    const generateData = () => {
         setIsLoading(true);
         setTimeout(() => {
             const languageModule = regionLanguageMap[region];
-            const data: UserData[] = Array.from({ length: 20 }, (_, index) => {
-                const identifier = generateRandomIdentifier(languageModule);
-                const name = generateRandomName(languageModule);
-                const address = generateRandomAddress(languageModule);
-                const phone = generateRandomPhone(languageModule);
-
-                return { index: index + 1, identifier, name, address, phone };
-            });
-
+            const data: UserData[] = Array.from({ length: 20 }, (_, index) =>
+                generateUserData(index + 1, languageModule)
+            );
             setIsLoading(false);
             setUserData(data);
-        }, 500);
-    }, [region]);
-
-    useEffect(() => {
-        // Fetch initial data
-        generateData();
-    }, [generateData]);
-
-    useEffect(() => {
-        // Regenerate data on region, error count, or seed change
-        generateData();
-    }, [region, errorCount, seed, generateData]);
-
-    const generateRandomIdentifier = (fakerModule: any): string => {
-        return fakerModule.string.uuid();
-    };
-
-    const generateRandomName = (fakerModule: any): string => {
-        return fakerModule.person.fullName();
-    };
-
-    const generateRandomAddress = (fakerModule: any): string => {
-        return fakerModule.location.streetAddress();
-    };
-
-    const generateRandomPhone = (fakerModule: any): string => {
-        return fakerModule.phone.number();
-    };
-
-    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
-        if (scrollHeight - scrollTop === clientHeight) {
-            // Load more data on reaching the end of scroll
-            loadMoreData();
-        }
+        }, Default.TIMEOUT);
     };
 
     const loadMoreData = () => {
         setIsLoading(true);
-
-        // Simulate API call to load more data
-        // Replace this with your actual data loading logic
         setTimeout(() => {
             const languageModule = regionLanguageMap[region];
             const startIndex = userData.length + 1;
-            const newData: UserData[] = Array.from({ length: 10 }, (_, index) => {
-                const i = startIndex + index;
-                const identifier = generateRandomIdentifier(languageModule);
-                const name = generateRandomName(languageModule);
-                const address = generateRandomAddress(languageModule);
-                const phone = generateRandomPhone(languageModule);
-
-                return { index: i, identifier, name, address, phone };
-            });
-
+            const newData: UserData[] = Array.from({ length: 10 }, (_, index) =>
+                generateUserData(startIndex + index, languageModule)
+            );
             setIsLoading(false);
             setUserData((prevData) => [...prevData, ...newData]);
-        }, 500);
+        }, Default.TIMEOUT);
+    };
+
+    useEffect(generateData, [region, errorCount, seed]);
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+        if (scrollHeight - scrollTop === clientHeight) {
+            loadMoreData();
+        }
     };
 
     const handleRegionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -220,4 +161,4 @@ const App: React.FC<AppProps> = () => {
     );
 };
 
-export default App;
+export default FakeDataGenerator;
