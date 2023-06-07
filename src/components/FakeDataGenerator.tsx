@@ -73,10 +73,10 @@ const FakeDataGenerator = () => {
                             </Form.Label>
                             <Col sm={4}>
                                 <Form.Control as="select" value={region} onChange={handleRegionChange}>
-                                    <option value="">Select language</option>
-                                    <option value="USA">English</option>
-                                    <option value="Russia">Russian</option>
-                                    <option value="Ukraine">Ukrainian</option>
+                                    <option value="">Select region</option>
+                                    <option value="USA">USA</option>
+                                    <option value="Russia">Russia</option>
+                                    <option value="Ukraine">Ukraine</option>
                                 </Form.Control>
                             </Col>
                         </Form.Group>
