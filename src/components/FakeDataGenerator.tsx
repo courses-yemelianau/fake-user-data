@@ -80,6 +80,7 @@ const FakeDataGenerator = () => {
                                 </Form.Control>
                             </Col>
                         </Form.Group>
+                        <br />
                         <Form.Group as={Row}>
                             <Form.Label column sm={2}>
                                 Error Count
@@ -101,6 +102,7 @@ const FakeDataGenerator = () => {
                                 />
                             </Col>
                         </Form.Group>
+                        <br />
                         <Form.Group as={Row}>
                             <Form.Label column sm={2}>
                                 Seed
@@ -111,6 +113,7 @@ const FakeDataGenerator = () => {
                                     value={seed}
                                     onChange={handleSeedChange}
                                 />
+                                <br />
                                 <Button variant="secondary" onClick={handleGenerateClick}>
                                     Random
                                 </Button>
