@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap';
+import { CSVLink } from 'react-csv';
 import { UserData } from '../interfaces';
 import { regionLanguageMap } from '../constants';
 import { generateRandomSeed, generateUserData, setFakerSeed } from '../utils';
@@ -68,6 +69,16 @@ const FakeDataGenerator = () => {
 
     const handleGenerateClick = () => {
         setSeed(generateRandomSeed(languageModule));
+    };
+
+    const handleExportClick = () => {
+        return userData.map((user) => ({
+            Index: user.index,
+            Identifier: user.identifier,
+            Name: user.name,
+            Address: user.address,
+            Phone: user.phone
+        }));
     };
 
     return (
@@ -158,6 +169,18 @@ const FakeDataGenerator = () => {
                             </tbody>
                         </Table>
                     </div>
+                </Col>
+            </Row>
+            <Row className="mt-4">
+                <Col>
+                    <CSVLink
+                        data={handleExportClick()}
+                        filename={'fake_data.csv'}
+                        className="btn btn-primary"
+                        target="_blank"
+                    >
+                        Export to CSV
+                    </CSVLink>
                 </Col>
             </Row>
         </Container>
