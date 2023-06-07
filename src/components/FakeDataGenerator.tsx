@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
 import { UserData } from '../interfaces';
-import { Default, regionLanguageMap } from '../constants';
-import { generateRandomSeed, generateUserData } from '../utils';
+import { regionLanguageMap } from '../constants';
+import { generateRandomSeed, generateUserData, setFakerSeed } from '../utils';
 
 const FakeDataGenerator = () => {
     const [region, setRegion] = useState<string>('USA');
@@ -16,25 +16,23 @@ const FakeDataGenerator = () => {
 
     const generateData = () => {
         setIsLoading(true);
-        setTimeout(() => {
-            const data: UserData[] = Array.from({ length: 20 }, (_, index) =>
-                generateUserData(languageModule, index + 1)
-            );
-            setIsLoading(false);
-            setUserData(data);
-        }, Default.TIMEOUT);
+        setFakerSeed(languageModule, seed);
+        const data: UserData[] = Array.from({ length: 20 }, (_, index) =>
+            generateUserData(languageModule, index + 1)
+        );
+        setIsLoading(false);
+        setUserData(data);
     };
 
     const loadMoreData = () => {
         setIsLoading(true);
-        setTimeout(() => {
-            const startIndex = userData.length + 1;
-            const newData: UserData[] = Array.from({ length: 10 }, (_, index) =>
-                generateUserData(languageModule, startIndex + index)
-            );
-            setIsLoading(false);
-            setUserData((prevData) => [...prevData, ...newData]);
-        }, Default.TIMEOUT);
+        const startIndex = userData.length + 1;
+        setFakerSeed(languageModule, seed, startIndex);
+        const newData: UserData[] = Array.from({ length: 10 }, (_, index) =>
+            generateUserData(languageModule, startIndex + index)
+        );
+        setIsLoading(false);
+        setUserData((prevData) => [...prevData, ...newData]);
     };
 
     useEffect(generateData, [region, errorCount, seed, languageModule]);
