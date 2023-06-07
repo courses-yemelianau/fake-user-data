@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
 import { UserData } from '../interfaces';
 import { regionLanguageMap } from '../constants';
 import { generateRandomSeed, generateUserData, setFakerSeed } from '../utils';
 
 const FakeDataGenerator = () => {
+    const tableRef = useRef<HTMLTableElement>(null);
+
     const [region, setRegion] = useState<string>('USA');
     const [errorCount, setErrorCount] = useState<number>(0);
     const [seed, setSeed] = useState<number>(0);
@@ -15,6 +17,7 @@ const FakeDataGenerator = () => {
     const languageModule = regionLanguageMap[region];
 
     const generateData = () => {
+        scrollToTop();
         setIsLoading(true);
         setFakerSeed(languageModule, seed);
         const data: UserData[] = Array.from({ length: 20 }, (_, index) =>
@@ -36,6 +39,12 @@ const FakeDataGenerator = () => {
     };
 
     useEffect(generateData, [region, errorCount, seed, languageModule]);
+
+    const scrollToTop = () => {
+        if (tableRef.current) {
+            tableRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }
+    };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
@@ -119,7 +128,7 @@ const FakeDataGenerator = () => {
             <Row className="mt-4">
                 <Col>
                     <div style={{ height: '400px', overflowY: 'scroll' }} onScroll={handleScroll}>
-                        <Table striped bordered hover>
+                        <Table striped bordered hover ref={tableRef}>
                             <thead>
                             <tr>
                                 <th>Index</th>
