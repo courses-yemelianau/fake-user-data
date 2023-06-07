@@ -2,22 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
 import { UserData } from '../interfaces';
 import { Default, regionLanguageMap } from '../constants';
-import { generateUserData } from '../utils';
+import { generateRandomSeed, generateUserData } from '../utils';
 
 const FakeDataGenerator = () => {
-    const [region, setRegion] = useState<string>('');
+    const [region, setRegion] = useState<string>('USA');
     const [errorCount, setErrorCount] = useState<number>(0);
-    const [seed, setSeed] = useState<string>('');
+    const [seed, setSeed] = useState<number>(0);
 
     const [userData, setUserData] = useState<UserData[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const languageModule = regionLanguageMap[region];
+
     const generateData = () => {
         setIsLoading(true);
         setTimeout(() => {
-            const languageModule = regionLanguageMap[region];
             const data: UserData[] = Array.from({ length: 20 }, (_, index) =>
-                generateUserData(index + 1, languageModule)
+                generateUserData(languageModule, index + 1)
             );
             setIsLoading(false);
             setUserData(data);
@@ -27,17 +28,16 @@ const FakeDataGenerator = () => {
     const loadMoreData = () => {
         setIsLoading(true);
         setTimeout(() => {
-            const languageModule = regionLanguageMap[region];
             const startIndex = userData.length + 1;
             const newData: UserData[] = Array.from({ length: 10 }, (_, index) =>
-                generateUserData(startIndex + index, languageModule)
+                generateUserData(languageModule, startIndex + index)
             );
             setIsLoading(false);
             setUserData((prevData) => [...prevData, ...newData]);
         }, Default.TIMEOUT);
     };
 
-    useEffect(generateData, [region, errorCount, seed]);
+    useEffect(generateData, [region, errorCount, seed, languageModule]);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
@@ -51,7 +51,8 @@ const FakeDataGenerator = () => {
     };
 
     const handleSeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSeed(e.target.value);
+        const value = parseInt(e.target.value);
+        setSeed(isNaN(value) ? 0 : value);
     };
 
     const handleSliderChange = (value: number) => {
@@ -59,7 +60,7 @@ const FakeDataGenerator = () => {
     };
 
     const handleGenerateClick = () => {
-        generateData();
+        setSeed(generateRandomSeed(languageModule));
     };
 
     return (
@@ -73,7 +74,6 @@ const FakeDataGenerator = () => {
                             </Form.Label>
                             <Col sm={4}>
                                 <Form.Control as="select" value={region} onChange={handleRegionChange}>
-                                    <option value="">Select region</option>
                                     <option value="USA">USA</option>
                                     <option value="Russia">Russia</option>
                                     <option value="Ukraine">Ukraine</option>
@@ -108,11 +108,7 @@ const FakeDataGenerator = () => {
                                 Seed
                             </Form.Label>
                             <Col sm={4}>
-                                <Form.Control
-                                    type="text"
-                                    value={seed}
-                                    onChange={handleSeedChange}
-                                />
+                                <Form.Control type="number" min={0} value={seed} onChange={handleSeedChange} />
                                 <br />
                                 <Button variant="secondary" onClick={handleGenerateClick}>
                                     Random
@@ -124,10 +120,7 @@ const FakeDataGenerator = () => {
             </Row>
             <Row className="mt-4">
                 <Col>
-                    <div
-                        style={{ height: '400px', overflowY: 'scroll' }}
-                        onScroll={handleScroll}
-                    >
+                    <div style={{ height: '400px', overflowY: 'scroll' }} onScroll={handleScroll}>
                         <Table striped bordered hover>
                             <thead>
                             <tr>
