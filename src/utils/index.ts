@@ -32,3 +32,19 @@ export const generateUserData = (fakerModule: Faker, index: number): UserData =>
     const phone = generateRandomPhone(fakerModule);
     return { index, identifier, name, address, phone };
 };
+
+export const addCharacter = (str: string, index: number, randomChar: string): string => {
+    return str.slice(0, index) + randomChar + str.slice(index);
+};
+
+export const deleteCharacter = (str: string, index: number): string => {
+    return str.slice(0, index) + str.slice(index + 1);
+};
+
+export const swapCharacters = (str: string, index: number): string => {
+    if (index === str.length - 1) {
+        return str.slice(0, index - 1) + str[index] + str[index - 1];
+    } else {
+        return str.slice(0, index) + str[index + 1] + str[index] + str.slice(index + 2);
+    }
+};
