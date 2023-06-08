@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap';
 import { CSVLink } from 'react-csv';
-import { UserData } from '../interfaces';
-import { regionLanguageMap } from '../constants';
-import { generateRandomSeed, generateUserData, setFakerSeed } from '../utils';
+import { Record, UserData } from '../interfaces';
+import { Misspelling, regionLanguageMap } from '../constants';
+import { generateUserData, setFakerSeed } from '../utils';
 
 const FakeDataGenerator = () => {
     const tableRef = useRef<HTMLTableElement>(null);
@@ -73,7 +73,61 @@ const FakeDataGenerator = () => {
     };
 
     const handleGenerateClick = () => {
-        setSeed(generateRandomSeed(languageModule));
+        // setSeed(generateRandomSeed(languageModule));
+        const res = generateHumanMisspellings(errorCount, { name: 'Hello', phone: '123123123', address: 'World' });
+        console.log(res);
+    };
+
+    const generateHumanMisspellings = (errorCount: number, record: Record) => {
+        const integerPart: number = Math.trunc(errorCount);
+        const fractionalPart: number = (errorCount % 1);
+
+        const proceed = () => {
+            const errorVariant = languageModule.number.int(2);
+
+            const fields: (keyof Record)[] = Object.keys(record) as (keyof Record)[];
+            const randomField: keyof Record = fields[languageModule.number.int(fields.length - 1)];
+
+            const randomCharIndex = languageModule.number.int(record[randomField].length - 1);
+
+            switch (errorVariant) {
+                case Misspelling.AddCharacter:
+                    record[randomField] = addRandomCharacter(record[randomField], randomCharIndex, languageModule.string.alpha());
+                    break;
+                case Misspelling.DeleteCharacter:
+                    record[randomField] = deleteCharacter(record[randomField], randomCharIndex);
+                    break;
+                case Misspelling.SwapCharacters:
+                    record[randomField] = swapCharacters(record[randomField], randomCharIndex);
+                    break;
+                default:
+            }
+        };
+
+        const range = Array.from({ length: integerPart }, (_, i) => i);
+        range.forEach(proceed);
+
+        if (fractionalPart * 100 > languageModule.number.int(100)) {
+            proceed();
+        }
+
+        return record;
+    };
+
+    const addRandomCharacter = (str: string, index: number, randomChar: string): string => {
+        return str.slice(0, index) + randomChar + str.slice(index);
+    };
+
+    const deleteCharacter = (str: string, index: number): string => {
+        return str.slice(0, index) + str.slice(index + 1);
+    };
+
+    const swapCharacters = (str: string, index: number): string => {
+        if (index === str.length - 1) {
+            return str.slice(0, index - 1) + str[index] + str[index - 1];
+        } else {
+            return str.slice(0, index) + str[index + 1] + str[index] + str.slice(index + 2);
+        }
     };
 
     const handleExportClick = () => {

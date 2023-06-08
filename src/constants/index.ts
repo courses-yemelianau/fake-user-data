@@ -10,6 +10,12 @@ export enum Env {
     Staging = 'staging'
 }
 
+export enum Misspelling {
+    DeleteCharacter,
+    AddCharacter,
+    SwapCharacters
+}
+
 export const {
     NODE_ENV = Env.Development
 } = process.env;
