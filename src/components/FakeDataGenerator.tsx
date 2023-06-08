@@ -67,6 +67,11 @@ const FakeDataGenerator = () => {
         setErrorCount(value);
     };
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value);
+        setErrorCount(isNaN(value) ? 0 : value);
+    };
+
     const handleGenerateClick = () => {
         setSeed(generateRandomSeed(languageModule));
     };
@@ -107,7 +112,7 @@ const FakeDataGenerator = () => {
                                 <Form.Range
                                     min={0}
                                     max={10}
-                                    step={1}
+                                    step={0.25}
                                     value={errorCount}
                                     onChange={(e) => handleSliderChange(Number(e.target.value))}
                                 />
@@ -116,7 +121,7 @@ const FakeDataGenerator = () => {
                                     min={0}
                                     max={1000}
                                     value={errorCount}
-                                    onChange={(e) => handleSliderChange(Number(e.target.value))}
+                                    onChange={handleInputChange}
                                 />
                             </Col>
                         </Form.Group>
