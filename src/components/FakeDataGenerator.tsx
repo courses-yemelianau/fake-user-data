@@ -72,7 +72,7 @@ const FakeDataGenerator = () => {
 
     const handleSeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = parseInt(e.target.value);
-        const maxInt = Number.MAX_SAFE_INTEGER; // Maximum safe integer value
+        const maxInt = Number.MAX_SAFE_INTEGER;
         if (isNaN(value)) {
             value = 0;
         } else if (value > maxInt) {
