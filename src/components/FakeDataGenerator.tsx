@@ -5,6 +5,7 @@ import { UserData } from '../interfaces';
 import { regionLanguageMap } from '../constants';
 import { generateRandomSeed, generateUserData, setFakerSeed } from '../utils';
 import HumanMisspellingGenerator from '../classes/HumanMisspellingGenerator';
+import './FakeDataGenerator.css';
 
 const FakeDataGenerator = () => {
     const tableRef = useRef<HTMLTableElement>(null);
@@ -181,9 +182,9 @@ const FakeDataGenerator = () => {
                                 <tr key={user.index}>
                                     <td>{user.index}</td>
                                     <td>{user.identifier}</td>
-                                    <td>{user.name}</td>
-                                    <td>{user.address}</td>
-                                    <td>{user.phone}</td>
+                                    <td className="ellipsis">{user.name}</td>
+                                    <td className="ellipsis">{user.address}</td>
+                                    <td className="ellipsis">{user.phone}</td>
                                 </tr>
                             ))}
                             {isLoading && (
