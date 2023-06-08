@@ -33,8 +33,8 @@ export const generateUserData = (fakerModule: Faker, index: number): UserData =>
     return { index, identifier, name, address, phone };
 };
 
-export const addCharacter = (str: string, index: number, randomChar: string): string => {
-    return str.slice(0, index) + randomChar + str.slice(index);
+export const addCharacter = (str: string, index: number): string => {
+    return str.slice(0, index) + str[index] + str.slice(index);
 };
 
 export const deleteCharacter = (str: string, index: number): string => {

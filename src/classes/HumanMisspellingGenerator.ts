@@ -7,14 +7,8 @@ interface MisspellingStrategy {
 }
 
 class AddCharacterStrategy implements MisspellingStrategy {
-    private languageModule: Faker;
-
-    constructor(languageModule: Faker) {
-        this.languageModule = languageModule;
-    }
-
     execute(record: Record, randomField: keyof Record, randomCharIndex: number): void {
-        record[randomField] = addCharacter(record[randomField], randomCharIndex, this.languageModule.string.alpha());
+        record[randomField] = addCharacter(record[randomField], randomCharIndex);
     }
 }
 
@@ -37,7 +31,7 @@ export default class HumanMisspellingGenerator {
     constructor(languageModule: Faker) {
         this.languageModule = languageModule;
         this.strategies = [
-            new AddCharacterStrategy(languageModule),
+            new AddCharacterStrategy(),
             new DeleteCharacterStrategy(),
             new SwapCharactersStrategy()
         ];
