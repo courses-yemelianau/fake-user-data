@@ -70,8 +70,14 @@ const FakeDataGenerator = () => {
     };
 
     const handleSeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(e.target.value);
-        setSeed(isNaN(value) ? 0 : value);
+        let value = parseInt(e.target.value);
+        const maxInt = Number.MAX_SAFE_INTEGER; // Maximum safe integer value
+        if (isNaN(value)) {
+            value = 0;
+        } else if (value > maxInt) {
+            value = maxInt;
+        }
+        setSeed(value);
     };
 
     const handleSliderChange = (value: number) => {
@@ -79,8 +85,13 @@ const FakeDataGenerator = () => {
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(e.target.value);
-        setErrorCount(isNaN(value) ? 0 : value);
+        let value = parseInt(e.target.value);
+        if (isNaN(value)) {
+            value = 0;
+        } else if (value > 1000) {
+            value = 1000;
+        }
+        setErrorCount(value);
     };
 
     const handleGenerateClick = () => {
